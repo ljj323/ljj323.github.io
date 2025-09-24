@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魏初玖 - 私人网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7C3AED',
+                        secondary: '#EC4899',
+                        tertiary: '#3B82F6',
+                        neutral: '#1F2937',
+                        light: '#F3F4F6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .backdrop-blur {
+                backdrop-filter: blur(8px);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .photo-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            @media (max-width: 640px) {
+                .photo-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans text-neutral">
+    <!-- 登录界面 -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4 transition-opacity duration-500">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl">
+            <div class="relative">
+                <div class="h-24 bg-gradient-to-r from-primary to-secondary"></div>
+                <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                    <img id="login-avatar" src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/f4a6d1b116604dfebc1d93a9ce87837a.png~tplv-a9rns2rl98-24-95-exif:1080:1080.png?rcl=20250924114305F408B03C2EB455091395&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1759290186&x-signature=mYgdbvOTjDgJ0baIhoG2Am4%2FuDc%3D" 
+                         alt="用户头像" 
+                         class="w-24 h-24 rounded-full border-4 border-white object-cover shadow-md">
+                </div>
+            </div>
+            <div class="p-8 pt-16 space-y-6">
+                <div class="text-center">
+                    <h1 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-neutral mb-2">魏初玖</h1>
+                    <p class="text-gray-500">私人照片与笔记存储</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <input type="text" id="username" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" placeholder="输入用户名">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" placeholder="输入密码">
+                            <button id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-neutral">
+                                <i class="fa fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button id="login-btn" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center">
+                        <span>登录</span>
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <div class="text-center text-sm text-gray-500">
+                    <p>这是一个私人网站，仅授权用户可访问</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主界面 -->
+    <div id="main-page" class="hidden min-h-screen">
+        <!-- 顶部导航 -->
+        <header class="bg-white/80 backdrop-blur shadow-sm sticky top-0 z-50 transition-all duration-300">
+            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <h1 class="text-xl font-bold text-neutral">魏初玖</h1>
+                    <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">私人空间</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <button id="stats-btn" class="text-gray-600 hover:text-primary transition-colors relative">
+                        <i class="fa fa-bar-chart"></i>
+                        <span class="ml-1">数据统计</span>
+                    </button>
+                    <button id="backup-btn" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fa fa-cloud-download"></i>
+                        <span class="ml-1">备份</span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-3">
+                        <span id="user-display-name" class="font-medium text-neutral"></span>
+                        <div class="relative group">
+                            <img id="user-avatar" src="https://p26-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/f4a6d1b116604dfebc1d93a9ce87837a.png~tplv-a9rns2rl98-24-95-exif:1080:1080.png?rcl=20250924114305F408B03C2EB455091395&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1759290186&x-signature=mYgdbvOTjDgJ0baIhoG2Am4%2FuDc%3D" 
+                                 alt="用户头像" 
+                                 class="w-10 h-10 rounded-full object-cover border-2 border-primary/20 cursor-pointer">
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-10">
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-light transition-colors">个人设置</a>
+                                <a href="#" class="block px-4 py-2 text-sm hover:bg-light transition-colors">修改密码</a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="#" id="menu-logout" class="block px-4 py-2 text-sm text-red-500 hover:bg-light">退出登录</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-primary">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 py-2">
+                <div class="container mx-auto px-4 space-y-1">
+                    <button id="mobile-stats-btn" class="w-full text-left px-3 py-2 rounded-lg hover:bg-light transition-colors flex items-center">
+                        <i class="fa fa-bar-chart w-5 text-center mr-2"></i>
+                        <span>数据统计</span>
+                    </button>
+                    <button id="mobile-backup-btn" class="w-full text-left px-3 py-2 rounded-lg hover:bg-light transition-colors flex items-center">
+                        <i class="fa fa-cloud-download w-5 text-center mr-2"></i>
+                        <span>备份数据</span>
+                    </button>
+                    <button id="mobile-logout-btn" class="w-full text-left px-3 py-2 rounded-lg hover:bg-light transition-colors flex items-center text-red-500">
+                        <i class="fa fa-sign-out w-5 text-center mr-2"></i>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- 欢迎消息 -->
+            <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-6 mb-8">
+                <h2 class="text-xl md:text-2xl font-bold mb-2">欢迎回来，<span id="welcome-name"></span></h2>
+                <p class="text-gray-600">今天是 <span id="current-date"></span>，你有 <span id="stats-summary" class="font-medium text-primary">0 张新照片</span> 和 <span class="font-medium text-secondary">0 篇新笔记</span></p>
+            </div>
+
+            <!-- 标签页切换 -->
+            <div class="mb-8 border-b border-gray-200">
+                <div class="flex space-x-8">
+                    <button id="photos-tab" class="py-4 px-1 border-b-2 border-primary text-primary font-medium flex items-center">
+                        <i class="fa fa-image mr-2"></i>照片
+                        <span id="photos-count" class="ml-1 bg-primary/10 text-primary text-xs px-1.5 py-0.5 rounded-full">0</span>
+                    </button>
+                    <button id="notes-tab" class="py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium flex items-center">
+                        <i class="fa fa-sticky-note mr-2"></i>笔记
+                        <span id="notes-count" class="ml-1 bg-secondary/10 text-secondary text-xs px-1.5 py-0.5 rounded-full">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 照片区域 -->
+            <div id="photos-section">
+                <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                    <h2 class="text-xl font-bold text-neutral">我的照片库</h2>
+                    <div class="flex items-center space-x-3">
+                        <!-- 相册分类下拉 -->
+                        <div class="relative">
+                            <select id="photo-album-select" class="appearance-none bg-white border border-gray-300 text-neutral rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm">
+                                <option value="all">所有照片</option>
+                                <option value="default">默认相册</option>
+                            </select>
+                            <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-xs"></i>
+                        </div>
+                        <button id="add-album-btn" class="bg-tertiary/10 hover:bg-tertiary/20 text-tertiary px-3 py-2 rounded-lg transition-all flex items-center text-sm">
+                            <i class="fa fa-folder-plus mr-1"></i>新建相册
+                        </button>
+                        <button id="add-photo-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all flex items-center text-sm">
+                            <i class="fa fa-plus mr-1"></i>添加照片
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 相册分类标签 -->
+                <div id="album-tags" class="flex flex-wrap gap-2 mb-6">
+                    <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm cursor-pointer album-tag active" data-album="all">
+                        全部
+                    </span>
+                    <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm cursor-pointer album-tag" data-album="default">
+                        默认相册
+                    </span>
+                </div>
+                
+                <div id="photos-container" class="photo-grid">
+                    <!-- 照片会通过JavaScript动态添加 -->
+                    <div class="text-center col-span-full py-16 text-gray-500">
+                        <i class="fa fa-picture-o text-5xl mb-4 opacity-30"></i>
+                        <p>暂无照片，点击"添加照片"按钮上传</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 笔记区域 -->
+            <div id="notes-section" class="hidden">
+                <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                    <h2 class="text-xl font-bold text-neutral">我的笔记</h2>
+                    <div class="flex items-center space-x-3">
+                        <!-- 笔记标签筛选 -->
+                        <div class="relative">
+                            <select id="note-tag-select" class="appearance-none bg-white border border-gray-300 text-neutral rounded-lg pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary text-sm">
+                                <option value="all">所有标签</option>
+                            </select>
+                            <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none text-xs"></i>
+                        </div>
+                        <button id="add-note-btn" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg transition-all flex items-center text-sm">
+                            <i class="fa fa-plus mr-1"></i>添加笔记
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 笔记标签 -->
+                <div id="note-tags" class="flex flex-wrap gap-2 mb-6">
+                    <span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm cursor-pointer note-tag active" data-tag="all">
+                        全部
+                    </span>
+                </div>
+                
+                <div id="notes-container" class="space-y-6">
+                    <!-- 笔记会通过JavaScript动态添加 -->
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa fa-file-text-o text-5xl mb-4 opacity-30"></i>
+                        <p>暂无笔记，点击"添加笔记"按钮创建</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="bg-white border-t border-gray-200 py-6 mt-12">
+            <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+                <p>魏初玖私人网站 &copy; <span id="current-year"></span></p>
+                <p class="mt-1">所有数据仅存储在本地，保护你的隐私安全</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 添加相册模态框 -->
+    <div id="album-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md p-6 transform transition-all">
+            <h3 class="text-lg font-bold text-neutral mb-4">创建新相册</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">相册名称</label>
+                    <input type="text" id="album-name" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-tertiary focus:border-tertiary transition-all outline-none" placeholder="给相册起个名字">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">相册描述（可选）</label>
+                    <textarea id="album-desc" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-tertiary focus:border-tertiary transition-all outline-none" placeholder="简单描述一下这个相册..."></textarea>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button id="cancel-album" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-all">
+                        取消
+                    </button>
+                    <button id="save-album" class="flex-1 bg-tertiary hover:bg-tertiary/90 text-white px-4 py-2 rounded-lg transition-all">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加照片模态框 -->
+    <div id="photo-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md p-6 transform transition-all">
+            <h3 class="text-lg font-bold text-neutral mb-4">添加新照片</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">选择相册</label>
+                    <div class="relative">
+                        <select id="photo-album" class="appearance-none w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none">
+                            <option value="default">默认相册</option>
+                        </select>
+                        <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">照片标题</label>
+                    <input type="text" id="photo-title" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" placeholder="给照片起个名字">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">上传照片</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                        <input type="file" id="photo-upload" accept="image/*" multiple class="hidden">
+                        <label for="photo-upload" class="cursor-pointer">
+                            <i class="fa fa-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500">点击或拖拽照片到这里（可多选）</p>
+                        </label>
+                    </div>
+                    <div id="photo-previews" class="mt-3 grid grid-cols-3 gap-2 hidden">
+                        <!-- 照片预览会动态添加 -->
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button id="cancel-photo" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-all">
+                        取消
+                    </button>
+                    <button id="save-photo" class="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加笔记模态框 -->
+    <div id="note-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-2xl p-6 transform transition-all max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold text-neutral mb-4">添加新笔记</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">笔记标题</label>
+                    <input type="text" id="note-title" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary focus:border-secondary transition-all outline-none" placeholder="笔记标题">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">标签</label>
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        <div id="note-tags-container" class="flex flex-wrap gap-2">
+                            <!-- 标签会动态添加 -->
+                        </div>
+                        <button id="add-note-tag-btn" class="text-secondary hover:text-secondary/80 p-1.5 border border-dashed border-secondary/30 rounded">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <input type="text" id="new-note-tag" placeholder="输入标签，按回车添加" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary focus:border-secondary transition-all outline-none text-sm">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">笔记内容</label>
+                    <textarea id="note-content" rows="8" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary focus:border-secondary transition-all outline-none" placeholder="输入笔记内容..."></textarea>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button id="cancel-note" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-all">
+                        取消
+                    </button>
+                    <button id="save-note" class="flex-1 bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg transition-all">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查看照片模态框 -->
+    <div id="view-photo-modal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4">
+        <div class="relative max-w-5xl w-full">
+            <button id="close-view-photo" class="absolute -top-12 right-0 text-white text-2xl hover:text-gray-300 z-10">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="md:w-2/3">
+                    <img id="view-photo-img" class="max-h-[80vh] mx-auto" alt="照片预览">
+                </div>
+                <div class="md:w-1/3 bg-white/10 backdrop-blur rounded-xl p-4 text-white max-w-md">
+                    <h3 id="view-photo-title" class="text-xl font-bold mb-2"></h3>
+                    <p class="text-white/80 text-sm mb-4">
+                        <span id="view-photo-album" class="bg-primary/30 px-2 py-0.5 rounded text-xs"></span>
+                    </p>
+                    <p class="text-white/80 text-sm mb-4">
+                        <i class="fa fa-calendar mr-1"></i>
+                        <span id="view-photo-date"></span>
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button id="edit-photo-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg text-sm flex items-center">
+                            <i class="fa fa-pencil mr-1"></i> 编辑信息
+                        </button>
+                        <button id="move-photo-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg text-sm flex items-center">
+                            <i class="fa fa-folder-open mr-1"></i> 移动相册
+                        </button>
+                    </div>
+                    <button id="delete-photo-btn" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-2 rounded-lg text-sm flex items-center justify-center">
+                        <i class="fa fa-trash mr-1"></i> 删除照片
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据统计模态框 -->
+    <div id="stats-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-4xl p-6 transform transition-all max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-neutral">数据统计</h3>
+                <button id="close-stats" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-light rounded-xl p-5">
+                    <p class="text-gray-500 text-sm mb-1">总照片数</p>
+                    <h4 id="total-photos-count" class="text-3xl font-bold text-primary">0</h4>
+                    <p class="text-gray-500 text-sm mt-2"><i class="fa fa-arrow-up text-green-500 mr-1"></i>较上月增长 0%</p>
+                </div>
+                <div class="bg-light rounded-xl p-5">
+                    <p class="text-gray-500 text-sm mb-1">总笔记数</p>
+                    <h4 id="total-notes-count" class="text-3xl font-bold text-secondary">0</h4>
+                    <p class="text-gray-500 text-sm mt-2"><i class="fa fa-arrow-up text-green-500 mr-1"></i>较上月增长 0%</p>
+                </div>
+                <div class="bg-light rounded-xl p-5">
+                    <p class="text-gray-500 text-sm mb-1">总存储空间</p>
+                    <h4 id="total-storage" class="text-3xl font-bold text-tertiary">0 MB</h4>
+                    <p class="text-gray-500 text-sm mt-2">已使用 <span id="storage-percentage">0%</span> 空间</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-light rounded-xl p-5">
+                    <h4 class="font-medium mb-4">照片按月统计</h4>
+                    <div class="h-64">
+                        <canvas id="photos-chart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-light rounded-xl p-5">
+                    <h4 class="font-medium mb-4">笔记按月统计</h4>
+                    <div class="h-64">
+                        <canvas id="notes-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-light rounded-xl p-5">
+                <h4 class="font-medium mb-4">相册分布</h4>
+                <div class="h-64">
+                    <canvas id="albums-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动照片模态框 -->
+    <div id="move-photo-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md p-6 transform transition-all">
+            <h3 class="text-lg font-bold text-neutral mb-4">移动到相册</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">选择目标相册</label>
+                    <div class="relative">
+                        <select id="target-album" class="appearance-none w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none">
+                            <option value="default">默认相册</option>
+                        </select>
+                        <i class="fa fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button id="cancel-move-photo" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-all">
+                        取消
+                    </button>
+                    <button id="confirm-move-photo" class="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all">
+                        确认移动
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 备份数据模态框 -->
+    <div id="backup-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl w-full max-w-md p-6 transform transition-all">
+            <h3 class="text-lg font-bold text-neutral mb-4">数据备份与恢复</h3>
+            
+            <div class="space-y-4">
+                <div class="bg-light rounded-lg p-4">
+                    <p class="text-sm text-gray-600 mb-3">备份将保存所有照片和笔记数据到本地文件</p>
+                    <button id="export-data-btn" class="w-full bg-tertiary hover:bg-tertiary/90 text-white px-4 py-2 rounded-lg transition-all flex items-center justify-center">
+                        <i class="fa fa-download mr-2"></i>导出数据备份
+                    </button>
+                </div>
+                
+                <div class="bg-light rounded-lg p-4">
+                    <p class="text-sm text-gray-600 mb-3">从备份文件恢复数据（将覆盖现有数据）</p>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-tertiary transition-colors">
+                        <input type="file" id="import-data" accept=".json" class="hidden">
+                        <label for="import-data" class="cursor-pointer">
+                            <i class="fa fa-upload text-xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 text-sm">点击或拖拽备份文件到这里</p>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="close-backup" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-all mt-4">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        const VALID_USERNAME = '戈黛瓦夫人';
+        const VALID_PASSWORD = '5202005323l';
+        let photos = [];
+        let notes = [];
+        let albums = [{ id: 'default', name: '默认相册', description: '默认存储的照片' }];
+        let currentViewingPhotoId = null;
+        let currentEditingNoteId = null;
+        let photosChart = null;
+        let notesChart = null;
+        let albumsChart = null;
+
+        // DOM 元素
+        const loginPage = document.getElementById('login-page');
+        const mainPage = document.getElementById('main-page');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('login-btn');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const userDisplayName = document.getElementById('user-display-name');
+        const welcomeName = document.getElementById('welcome-name');
+        const currentDateEl = document.getElementById('current-date');
+        const currentYearEl = document.getElementById('current-year');
+        const photosCountEl = document.getElementById('photos-count');
+        const notesCountEl = document.getElementById('notes-count');
+        const statsSummaryEl = document.getElementById('stats-summary');
+        
+        // 移动端菜单
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        // 标签页元素
+        const photosTab = document.getElementById('photos-tab');
+        const notesTab = document.getElementById('notes-tab');
+        const photosSection = document.getElementById('photos-section');
+        const notesSection = document.getElementById('notes-section');
+        
+        // 相册相关元素
+        const albumTags = document.getElementById('album-tags');
+        const photoAlbumSelect = document.getElementById('photo-album-select');
+        const addAlbumBtn = document.getElementById('add-album-btn');
+        const albumModal = document.getElementById('album-modal');
+        const cancelAlbumBtn = document.getElementById('cancel-album');
+        const saveAlbumBtn = document.getElementById('save-album');
+        const albumNameInput = document.getElementById('album-name');
+        const albumDescInput = document.getElementById('album-desc');
+        
+        // 照片相关元素
+        const addPhotoBtn = document.getElementById('add-photo-btn');
+        const photoModal = document.getElementById('photo-modal');
+        const cancelPhotoBtn = document.getElementById('cancel-photo');
+        const savePhotoBtn = document.getElementById('save-photo');
+        const photoTitleInput = document.getElementById('photo-title');
+        const photoUploadInput = document.getElementById('photo-upload');
+        const photoPreviews = document.getElementById('photo-previews');
+        const photoAlbumSelectInput = document.getElementById('photo-album');
+        const photosContainer = document.getElementById('photos-container');
+        const viewPhotoModal = document.getElementById('view-photo-modal');
+        const viewPhotoImg = document.getElementById('view-photo-img');
+        const viewPhotoTitle = document.getElementById('view-photo-title');
+        const viewPhotoAlbum = document.getElementById('view-photo-album');
+        const viewPhotoDate = document.getElementById('view-photo-date');
+        const closeViewPhotoBtn = document.getElementById('close-view-photo');
+        const deletePhotoBtn = document.getElementById('delete-photo-btn');
+        const movePhotoBtn = document.getElementById('move-photo-btn');
+        const movePhotoModal = document.getElementById('move-photo-modal');
+        const targetAlbumSelect = document.getElementById('target-album');
+        const cancelMovePhotoBtn = document.getElementById('cancel-move-photo');
+        const confirmMovePhotoBtn = document.getElementById('confirm-move-photo');
+        
+        // 笔记相关元素
+        const addNoteBtn = document.getElementById('add-note-btn');
+        const noteModal = document.getElementById('note-modal');
+        const cancelNoteBtn = document.getElementById('cancel-note');
+        const saveNoteBtn = document.getElementById('save-note');
+        const noteTitleInput = document.getElementById('note-title');
+        const noteContentInput = document.getElementById('note-content');
+        const notesContainer = document.getElementById('notes-container');
+        const noteTagSelect = document.getElementById('note-tag-select');
+        const noteTagsContainer = document.getElementById('note-tags-container');
+        const newNoteTagInput = document.getElementById('new-note-tag');
+        const addNoteTagBtn = document.getElementById('add-note-tag-btn');
+        const noteTagsEl = document.getElementById('note-tags');
+        
+        // 数据统计相关元素
+        const statsBtn = document.getElementById('stats-btn');
+        const mobileStatsBtn = document.getElementById('mobile-stats-btn');
+        const statsModal = document.getElementById('stats-modal');
+        const closeStatsBtn = document.getElementById('close-stats');
+        const totalPhotosCountEl = document.getElementById('total-photos-count');
+        const totalNotesCountEl = document.getElementById('total-notes-count');
+        const totalStorageEl = document.getElementById('total-storage');
+        const storagePercentageEl = document.getElementById('storage-percentage');
+        
+        // 备份相关元素
+        const backupBtn = document.getElementById('backup-btn');
+        const mobileBackupBtn = document.getElementById('mobile-backup-btn');
+        const backupModal = document.getElementById('backup-modal');
+        const closeBackupBtn = document.getElementById('close-backup');
+        const exportDataBtn = document.getElementById('export-data-btn');
+        const importDataInput = document.getElementById('import-data');
+        
+        // 登出相关元素
+        const logoutBtn = document.getElementById('logout-btn');
+        const menuLogoutBtn = document.getElementById('menu-logout');
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+
+        // 初始化
+        function init() {
+            // 设置当前日期和年份
+            const now = new Date();
+            currentDateEl.textContent = now.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+            currentYearEl.textContent = now.getFullYear();
+            
+            // 尝试从本地存储加载数据
+            loadData();
+            
+            // 绑定事件处理程序
+            bindEvents();
+            
+            // 渲染数据
+            renderAlbums();
+            renderPhotos();
+            renderNotes();
+            renderNoteTags();
+            updateCounters();
+            
+            // 初始化图表
+            initCharts();
+        }
+
+        // 绑定事件处理程序
+        function bindEvents() {
+            // 登录相关
+            loginBtn.addEventListener('click', handleLogin);
+            usernameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
+            
+            // 登出相关
+            logoutBtn.addEventListener('click', handleLogout);
+            menuLogoutBtn.addEventListener('click', handleLogout);
+            mobileLogoutBtn.addEventListener('click', handleLogout);
+            
+            // 移动端菜单
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            
+            // 标签页切换
+            photosTab.addEventListener('click', () => switchTab('photos'));
+            notesTab.addEventListener('click', () => switchTab('notes'));
+            
+            // 相册相关
+            addAlbumBtn.addEventListener('click', openAlbumModal);
+            cancelAlbumBtn.addEventListener('click', closeAlbumModal);
+            saveAlbumBtn.addEventListener('click', saveAlbum);
+            albumTags.addEventListener('click', handleAlbumTagClick);
+            photoAlbumSelect.addEventListener('change', filterPhotosByAlbum);
+            
+            // 照片相关
+            addPhotoBtn.addEventListener('click', openPhotoModal);
+            cancelPhotoBtn.addEventListener('click', closePhotoModal);
+            savePhotoBtn.addEventListener('click', savePhotos);
+            photoUploadInput.addEventListener('change', handlePhotoUpload);
+            closeViewPhotoBtn.addEventListener('click', closeViewPhotoModal);
+            deletePhotoBtn.addEventListener('click', confirmDeletePhoto);
+            movePhotoBtn.addEventListener('click', openMovePhotoModal);
+            cancelMovePhotoBtn.addEventListener('click', closeMovePhotoModal);
+            confirmMovePhotoBtn.addEventListener('click', confirmMovePhoto);
+            
+            // 笔记相关
+            addNoteBtn.addEventListener('click', openNoteModal);
+            cancelNoteBtn.addEventListener('click', closeNoteModal);
+            saveNoteBtn.addEventListener('click', saveNote);
+            addNoteTagBtn.addEventListener('click', addNoteTag);
+            newNoteTagInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addNoteTag();
+                }
+            });
+            noteTagSelect.addEventListener('change', filterNotesByTag);
+            noteTagsEl.addEventListener('click', handleNoteTagClick);
+            
+            // 数据统计相关
+            statsBtn.addEventListener('click', openStatsModal);
+            mobileStatsBtn.addEventListener('click', () => {
+                openStatsModal();
+                toggleMobileMenu();
+            });
+            closeStatsBtn.addEventListener('click', closeStatsModal);
+            
+            // 备份相关
+            backupBtn.addEventListener('click', openBackupModal);
+            mobileBackupBtn.addEventListener('click', () => {
+                openBackupModal();
+                toggleMobileMenu();
+            });
+            closeBackupBtn.addEventListener('click', closeBackupModal);
+            exportDataBtn.addEventListener('click', exportData);
+            importDataInput.addEventListener('change', importData);
+        }
+
+        // 登录相关函数
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // 登录成功
+                userDisplayName.textContent = username;
+                welcomeName.textContent = username;
+                
+                // 添加过渡动画
+                loginPage.classList.add('opacity-0');
+                setTimeout(() => {
+                    loginPage.classList.add('hidden');
+                    mainPage.classList.remove('hidden');
+                    // 计算新内容统计
+                    calculateNewContentStats();
+                }, 500);
+                
+                // 清空输入
+                usernameInput.value = '';
+                passwordInput.value = '';
+            } else {
+                // 登录失败 - 添加抖动动画
+                const loginForm = document.querySelector('#login-page .bg-white');
+                loginForm.classList.add('animate-shake');
+                setTimeout(() => {
+                    loginForm.classList.remove('animate-shake');
+                }, 500);
+                alert('用户名或密码错误');
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // 切换图标
+            const icon = togglePasswordBtn.querySelector('i');
+            if (type === 'password') {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function handleLogout() {
+            mainPage.classList.add('hidden');
+            loginPage.classList.remove('hidden', 'opacity-0');
+            toggleMobileMenu(); // 确保移动菜单关闭
+        }
+
+        // 移动端菜单
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // 切换标签页
+        function switchTab(tabName) {
+            if (tabName === 'photos') {
+                photosTab.classList.add('border-primary', 'text-primary');
+                photosTab.classList.remove('border-transparent', 'text-gray-500');
+                notesTab.classList.add('border-transparent', 'text-gray-500');
+                notesTab.classList.remove('border-primary', 'text-primary');
+                photosSection.classList.remove('hidden');
+                notesSection.classList.add('hidden');
+            } else if (tabName === 'notes') {
+                notesTab.classList.add('border-primary', 'text-primary');
+                notesTab.classList.remove('border-transparent', 'text-gray-500');
+                photosTab.classList.add('border-transparent', 'text-gray-500');
+                photosTab.classList.remove('border-primary', 'text-primary');
+                notesSection.classList.remove('hidden');
+                photosSection.classList.add('hidden');
+            }
+        }
+
+        // 相册相关函数
+        function openAlbumModal() {
+            albumNameInput.value = '';
+            albumDescInput.value = '';
+            albumModal.classList.remove('hidden');
+            albumModal.classList.add('flex');
+        }
+
+        function closeAlbumModal() {
+            albumModal.classList.remove('flex');
+            albumModal.classList.add('hidden');
+        }
+
+        function saveAlbum() {
+            const name = albumNameInput.value.trim();
+            const description = albumDescInput.value.trim();
+            
+            if (!name) {
+                alert('请输入相册名称');
+                return;
+            }
+            
+            // 检查相册名称是否已存在
+            if (albums.some(album => album.name === name)) {
+                alert('该相册名称已存在');
+                return;
+            }
+            
+            // 创建新相册对象
+            const newAlbum = {
+                id: 'album_' + Date.now().toString(),
+                name: name,
+                description: description,
+                createdAt: new Date().toISOString()
+            };
+            
+            // 添加到数组并保存
+            albums.push(newAlbum);
+            saveData();
+            renderAlbums();
+            
+            // 关闭模态框
+            closeAlbumModal();
+        }
+
+        function renderAlbums() {
+            // 更新相册下拉菜单
+            photoAlbumSelect.innerHTML = '';
+            targetAlbumSelect.innerHTML = '';
+            
+            albums.forEach(album => {
+                const option1 = document.createElement('option');
+                option1.value = album.id;
+                option1.textContent = album.name;
+                photoAlbumSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = album.id;
+                option2.textContent = album.name;
+                targetAlbumSelect.appendChild(option2);
+            });
+            
+            // 更新相册标签
+            const activeAlbum = document.querySelector('.album-tag.active')?.dataset.album || 'all';
+            albumTags.innerHTML = '';
+            
+            // 添加"全部"标签
+            const allTag = document.createElement('span');
+            allTag.className = `px-3 py-1 rounded-full text-sm cursor-pointer album-tag ${activeAlbum === 'all' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600'}`;
+            allTag.dataset.album = 'all';
+            allTag.textContent = '全部';
+            albumTags.appendChild(allTag);
+            
+            // 添加各个相册标签
+            albums.forEach(album => {
+                const tag = document.createElement('span');
+                tag.className = `px-3 py-1 rounded-full text-sm cursor-pointer album-tag ${activeAlbum === album.id ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-600'}`;
+                tag.dataset.album = album.id;
+                tag.textContent = album.name;
+                albumTags.appendChild(tag);
+            });
+            
+            // 更新图表
+            updateAlbumsChart();
+        }
+
+        function handleAlbumTagClick(e) {
+            const tag = e.target.closest('.album-tag');
+            if (tag) {
+                // 更新活跃状态
+                document.querySelectorAll('.album-tag').forEach(t => {
+                    t.classList.remove('bg-primary/10', 'text-primary');
+                    t.classList.add('bg-gray-100', 'text-gray-600');
+                });
+                tag.classList.remove('bg-gray-100', 'text-gray-600');
+                tag.classList.add('bg-primary/10', 'text-primary');
+                
+                // 筛选照片
+                const albumId = tag.dataset.album;
+                photoAlbumSelect.value = albumId === 'all' ? '' : albumId;
+                filterPhotosByAlbum(albumId);
+            }
+        }
+
+        function filterPhotosByAlbum(albumId = null) {
+            const albumToFilter = albumId || photoAlbumSelect.value;
+            
+            // 更新标签活跃状态
+            document.querySelectorAll('.album-tag').forEach(tag => {
+                if (tag.dataset.album === albumToFilter) {
+                    tag.classList.remove('bg-gray-100', 'text-gray-600');
+                    tag.classList.add('bg-primary/10', 'text-primary');
+                } else {
+                    tag.classList.remove('bg-primary/10', 'text-primary');
+                    tag.classList.add('bg-gray-100', 'text-gray-600');
+                }
+            });
+            
+            // 筛选并重新渲染照片
+            renderPhotos(albumToFilter);
+        }
+
+        // 照片相关函数
+        function openPhotoModal() {
+            photoTitleInput.value = '';
+            photoUploadInput.value = '';
+            photoPreviews.innerHTML = '';
+            photoPreviews.classList.add('hidden');
+            photoModal.classList.remove('hidden');
+            photoModal.classList.add('flex');
+        }
+
+        function closePhotoModal() {
+            photoModal.classList.remove('flex');
+            photoModal.classList.add('hidden');
+        }
+
+        function handlePhotoUpload(e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                photoPreviews.innerHTML = '';
+                photoPreviews.classList.remove('hidden');
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        const preview = document.createElement('div');
+                        preview.className = 'relative rounded-lg overflow-hidden aspect-square bg-gray-100';
+                        preview.innerHTML = `
+                            <img src="${event.target.result}" alt="预览图" class="w-full h-full object-cover">
+                            <span class="absolute top-1 right-1 bg-black/50 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">${i + 1}</span>
+                        `;
+                        photoPreviews.appendChild(preview);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        function savePhotos() {
+            const albumId = photoAlbumSelectInput.value;
+            const baseTitle = photoTitleInput.value.trim() || '未命名照片';
+            const files = photoUploadInput.files;
+            
+            if (!files || files.length === 0) {
+                alert('请上传照片');
+                return;
+            }
+            
+            // 为每张照片创建对象
+            const newPhotos = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                // 使用闭包保存当前索引
+                (function(index) {
+                    reader.onload = function(event) {
+                        const title = files.length > 1 
+                            ? `${baseTitle} (${index + 1})` 
+                            : baseTitle;
+                            
+                        const newPhoto = {
+                            id: 'photo_' + Date.now().toString() + '_' + index,
+                            title: title,
+                            src: event.target.result,
+                            albumId: albumId,
+                            date: new Date().toISOString(),
+                            fileSize: file.size
+                        };
+                        
+                        newPhotos.push(newPhoto);
+                        
+                        // 当所有照片都处理完成
+                        if (newPhotos.length === files.length) {
+                            // 添加到数组并保存
+                            photos = [...newPhotos, ...photos];
+                            saveData();
+                            renderPhotos();
+                            updateCounters();
+                            updateStats();
+                            
+                            // 关闭模态框
+                            closePhotoModal();
+                        }
+                    };
+                })(i);
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderPhotos(filterAlbumId = 'all') {
+            let filteredPhotos = photos;
+            
+            // 应用相册筛选
+            if (filterAlbumId && filterAlbumId !== 'all') {
+                filteredPhotos = photos.filter(photo => photo.albumId === filterAlbumId);
+            }
+            
+            if (filteredPhotos.length === 0) {
+                photosContainer.innerHTML = `
+                    <div class="text-center col-span-full py-16 text-gray-500">
+                        <i class="fa fa-picture-o text-5xl mb-4 opacity-30"></i>
+                        <p>该相册暂无照片，点击"添加照片"按钮上传</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            photosContainer.innerHTML = '';
+            
+            filteredPhotos.forEach(photo => {
+                const album = albums.find(a => a.id === photo.albumId) || { name: '未知相册' };
+                
+                const photoCard = document.createElement('div');
+                photoCard.className = 'bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group relative aspect-square';
+                photoCard.innerHTML = `
+                    <div class="absolute top-1 right-1 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        ${album.name}
+                    </div>
+                    <img src="${photo.src}" alt="${photo.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <button class="view-photo-btn bg-white text-neutral p-2 rounded-full mr-2 hover:bg-gray-100 transition-colors" data-id="${photo.id}">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="delete-photo-btn bg-white text-red-500 p-2 rounded-full hover:bg-gray-100 transition-colors" data-id="${photo.id}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <h3 class="text-white text-xs font-medium truncate">${photo.title}</h3>
+                    </div>
+                `;
+                
+                photosContainer.appendChild(photoCard);
+                
+                // 添加事件监听
+                photoCard.querySelector('.view-photo-btn').addEventListener('click', () => viewPhoto(photo.id));
+                photoCard.querySelector('.delete-photo-btn').addEventListener('click', () => {
+                    if (confirm('确定要删除这张照片吗？')) {
+                        deletePhoto(photo.id);
+                    }
+                });
+            });
+        }
+
+        function viewPhoto(photoId) {
+            const photo = photos.find(p => p.id === photoId);
+            if (photo) {
+                currentViewingPhotoId = photoId;
+                const album = albums.find(a => a.id === photo.albumId) || { name: '未知相册' };
+                
+                viewPhotoTitle.textContent = photo.title;
+                viewPhotoImg.src = photo.src;
+                viewPhotoImg.alt = photo.title;
+                viewPhotoAlbum.textContent = album.name;
+                viewPhotoDate.textContent = formatDate(photo.date);
+                
+                viewPhotoModal.classList.remove('hidden');
+                viewPhotoModal.classList.add('flex');
+            }
+        }
+
+        function closeViewPhotoModal() {
+            viewPhotoModal.classList.remove('flex');
+            viewPhotoModal.classList.add('hidden');
+            currentViewingPhotoId = null;
+        }
+
+        function confirmDeletePhoto() {
+            if (currentViewingPhotoId && confirm('确定要删除这张照片吗？此操作不可恢复。')) {
+                deletePhoto(currentViewingPhotoId);
+                closeViewPhotoModal();
+            }
+        }
+
+        function deletePhoto(photoId) {
+            photos = photos.filter(p => p.id !== photoId);
+            saveData();
+            renderPhotos(document.querySelector('.album-tag.active')?.dataset.album || 'all');
+            updateCounters();
+            updateStats();
+        }
+
+        function openMovePhotoModal() {
+            if (currentViewingPhotoId) {
+                const photo = photos.find(p => p.id === currentViewingPhotoId);
+                if (photo) {
+                    targetAlbumSelect.value = photo.albumId;
+                    movePhotoModal.classList.remove('hidden');
+                    movePhotoModal.classList.add('flex');
+                }
+            }
+        }
+
+        function closeMovePhotoModal() {
+            movePhotoModal.classList.remove('flex');
+            movePhotoModal.classList.add('hidden');
+        }
+
+        function confirmMovePhoto() {
+            if (currentViewingPhotoId) {
+                const newAlbumId = targetAlbumSelect.value;
+                const photoIndex = photos.findIndex(p => p.id === currentViewingPhotoId);
+                
+                if (photoIndex !== -1) {
+                    photos[photoIndex].albumId = newAlbumId;
+                    saveData();
+                    
+                    // 更新当前查看的照片信息
+                    const album = albums.find(a => a.id === newAlbumId) || { name: '未知相册' };
+                    viewPhotoAlbum.textContent = album.name;
+                    
+                    renderPhotos(document.querySelector('.album-tag.active')?.dataset.album || 'all');
+                    updateAlbumsChart();
+                    
+                    closeMovePhotoModal();
+                }
+            }
+        }
+
+        // 笔记相关函数
+        function openNoteModal(noteId = null) {
+            // 清空标签容器
+            noteTagsContainer.innerHTML = '';
+            
+            if (noteId) {
+                // 编辑现有笔记
+                currentEditingNoteId = noteId;
+                const note = notes.find(n => n.id === noteId);
+                
+                if (note) {
+                    noteTitleInput.value = note.title;
+                    noteContentInput.value = note.content;
+                    
+                    // 添加现有标签
+                    note.tags.forEach(tag => {
+                        addTagToContainer(tag);
+                    });
+                }
+            } else {
+                // 创建新笔记
+                currentEditingNoteId = null;
+                noteTitleInput.value = '';
+                noteContentInput.value = '';
+            }
+            
+            newNoteTagInput.value = '';
+            noteModal.classList.remove('hidden');
+            noteModal.classList.add('flex');
+        }
+
+        function closeNoteModal() {
+            noteModal.classList.remove('flex');
+            noteModal.classList.add('hidden');
+            currentEditingNoteId = null;
+        }
+
+        function addNoteTag() {
+            const tagText = newNoteTagInput.value.trim();
+            
+            if (tagText) {
+                // 检查标签是否已存在
+                const existingTags = Array.from(noteTagsContainer.querySelectorAll('.note-tag-item'))
+                    .map(el => el.dataset.tag);
+                
+                if (!existingTags.includes(tagText)) {
+                    addTagToContainer(tagText);
+                    newNoteTagInput.value = '';
+                }
+            }
+        }
+
+        function addTagToContainer(tagText) {
+            const tagEl = document.createElement('span');
+            tagEl.className = 'note-tag-item bg-secondary/10 text-secondary px-2 py-1 rounded-full text-sm flex items-center';
+            tagEl.dataset.tag = tagText;
+            tagEl.innerHTML = `
+                ${tagText}
+                <button class="ml-1 text-secondary/70 hover:text-secondary">
+                    <i class="fa fa-times-circle"></i>
+                </button>
+            `;
+            
+            // 删除标签事件
+            tagEl.querySelector('button').addEventListener('click', (e) => {
+                e.stopPropagation();
+                tagEl.remove();
+            });
+            
+            noteTagsContainer.appendChild(tagEl);
+        }
+
+        function saveNote() {
+            const title = noteTitleInput.value.trim();
+            const content = noteContentInput.value.trim();
+            
+            // 获取标签
+            const tags = Array.from(noteTagsContainer.querySelectorAll('.note-tag-item'))
+                .map(el => el.dataset.tag);
+            
+            if (!title) {
+                alert('请输入笔记标题');
+                return;
+            }
+            
+            if (!content) {
+                alert('请输入笔记内容');
+                return;
+            }
+            
+            if (currentEditingNoteId) {
+                // 更新现有笔记
+                const noteIndex = notes.findIndex(n => n.id === currentEditingNoteId);
+                
+                if (noteIndex !== -1) {
+                    notes[noteIndex].title = title;
+                    notes[noteIndex].content = content;
+                    notes[noteIndex].tags = tags;
+                    notes[noteIndex].date = new Date().toISOString(); // 更新日期为修改日期
+                }
+            } else {
+                // 创建新笔记
+                const newNote = {
+                    id: 'note_' + Date.now().toString(),
+                    title: title,
+                    content: content,
+                    tags: tags,
+                    date: new Date().toISOString()
+                };
+                
+                // 添加到数组
+                notes.unshift(newNote);
+            }
+            
+            // 保存并重新渲染
+            saveData();
+            renderNotes();
+            renderNoteTags();
+            updateCounters();
+            updateStats();
+            
+            // 关闭模态框
+            closeNoteModal();
+        }
+
+        function renderNotes(filterTag = 'all') {
+            let filteredNotes = notes;
+            
+            // 应用标签筛选
+            if (filterTag && filterTag !== 'all') {
+                filteredNotes = notes.filter(note => note.tags.includes(filterTag));
+            }
+            
+            if (filteredNotes.length === 0) {
+                notesContainer.innerHTML = `
+                    <div class="text-center py-16 text-gray-500">
+                        <i class="fa fa-file-text-o text-5xl mb-4 opacity-30"></i>
+                        <p>暂无符合条件的笔记，点击"添加笔记"按钮创建</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            notesContainer.innerHTML = '';
+            
+            filteredNotes.forEach(note => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-5 relative group';
+                
+                // 构建标签HTML
+                let tagsHtml = '';
+                if (note.tags && note.tags.length > 0) {
+                    tagsHtml = '<div class="flex flex-wrap gap-1 mb-3">';
+                    note.tags.forEach(tag => {
+                        tagsHtml += `<span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded-full text-xs">${tag}</span>`;
+                    });
+                    tagsHtml += '</div>';
+                }
+                
+                noteCard.innerHTML = `
+                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all">
+                        <button class="edit-note-btn text-gray-500 hover:text-primary mr-2" data-id="${note.id}">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button class="delete-note-btn text-gray-500 hover:text-red-500" data-id="${note.id}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                    <h3 class="text-lg font-bold text-neutral mb-2">${note.title}</h3>
+                    ${tagsHtml}
+                    <p class="text-gray-600 text-sm mb-3 whitespace-pre-line">${truncateText(note.content, 200)}</p>
+                    <p class="text-xs text-gray-500">${formatDate(note.date)}</p>
+                `;
+                
+                notesContainer.appendChild(noteCard);
+                
+                // 添加事件监听
+                noteCard.querySelector('.edit-note-btn').addEventListener('click', () => openNoteModal(note.id));
+                noteCard.querySelector('.delete-note-btn').addEventListener('click', () => {
+                    if (confirm('确定要删除这篇笔记吗？')) {
+                        deleteNote(note.id);
+                    }
+                });
+            });
+        }
+
+        function renderNoteTags() {
+            // 收集所有唯一标签
+            const allTags = new Set();
+            notes.forEach(note => {
+                note.tags.forEach(tag => allTags.add(tag));
+            });
+            
+            // 更新标签下拉菜单
+            noteTagSelect.innerHTML = '<option value="all">所有标签</option>';
+            allTags.forEach(tag => {
+                const option = document.createElement('option');
+                option.value = tag;
+                option.textContent = tag;
+                noteTagSelect.appendChild(option);
+            });
+            
+            // 更新标签显示
+            const activeTag = document.querySelector('.note-tag.active')?.dataset.tag || 'all';
+            noteTagsEl.innerHTML = '';
+            
+            // 添加"全部"标签
+            const allTag = document.createElement('span');
+            allTag.className = `px-3 py-1 rounded-full text-sm cursor-pointer note-tag ${activeTag === 'all' ? 'bg-secondary/10 text-secondary' : 'bg-gray-100 text-gray-600'}`;
+            allTag.dataset.tag = 'all';
+            allTag.textContent = '全部';
+            noteTagsEl.appendChild(allTag);
+            
+            // 添加各个标签
+            allTags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = `px-3 py-1 rounded-full text-sm cursor-pointer note-tag ${activeTag === tag ? 'bg-secondary/10 text-secondary' : 'bg-gray-100 text-gray-600'}`;
+                tagEl.dataset.tag = tag;
+                tagEl.textContent = tag;
+                noteTagsEl.appendChild(tagEl);
+            });
+        }
+
+        function handleNoteTagClick(e) {
+            const tag = e.target.closest('.note-tag');
+            if (tag) {
+                // 更新活跃状态
+                document.querySelectorAll('.note-tag').forEach(t => {
+                    t.classList.remove('bg-secondary/10', 'text-secondary');
+                    t.classList.add('bg-gray-100', 'text-gray-600');
+                });
+                tag.classList.remove('bg-gray-100', 'text-gray-600');
+                tag.classList.add('bg-secondary/10', 'text-secondary');
+                
+                // 筛选笔记
+                const tagText = tag.dataset.tag;
+                noteTagSelect.value = tagText;
+                filterNotesByTag(tagText);
+            }
+        }
+
+        function filterNotesByTag(tag = null) {
+            const tagToFilter = tag || noteTagSelect.value;
+            
+            // 更新标签活跃状态
+            document.querySelectorAll('.note-tag').forEach(tagEl => {
+                if (tagEl.dataset.tag === tagToFilter) {
+                    tagEl.classList.remove('bg-gray-100', 'text-gray-600');
+                    tagEl.classList.add('bg-secondary/10', 'text-secondary');
+                } else {
+                    tagEl.classList.remove('bg-secondary/10', 'text-secondary');
+                    tagEl.classList.add('bg-gray-100', 'text-gray-600');
+                }
+            });
+            
+            // 筛选并重新渲染笔记
+            renderNotes(tagToFilter);
+        }
+
+        function deleteNote(noteId) {
+            notes = notes.filter(n => n.id !== noteId);
+            saveData();
+            renderNotes(document.querySelector('.note-tag.active')?.dataset.tag || 'all');
+            renderNoteTags();
+            updateCounters();
+            updateStats();
+        }
+
+        // 数据统计相关函数
+        function openStatsModal() {
+            updateStats();
+            statsModal.classList.remove('hidden');
+            statsModal.classList.add('flex');
+        }
+
+        function closeStatsModal() {
+            statsModal.classList.remove('flex');
+            statsModal.classList.add('hidden');
+        }
+
+        function initCharts() {
+            // 照片统计图表
+            const photosCtx = document.getElementById('photos-chart').getContext('2d');
+            photosChart = new Chart(photosCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '照片数量',
+                        data: [],
+                        backgroundColor: '#7C3AED',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 笔记统计图表
+            const notesCtx = document.getElementById('notes-chart').getContext('2d');
+            notesChart = new Chart(notesCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '笔记数量',
+                        data: [],
+                        backgroundColor: '#EC4899',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 相册分布图表
+            const albumsCtx = document.getElementById('albums-chart').getContext('2d');
+            albumsChart = new Chart(albumsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#7C3AED', '#EC4899', '#3B82F6', '#10B981', '#F59E0B',
+                            '#EF4444', '#8B5CF6', '#EC4899', '#3B82F6', '#10B981'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+
+        function updateStats() {
+            // 更新总数统计
+            totalPhotosCountEl.textContent = photos.length;
+            totalNotesCountEl.textContent = notes.length;
+            
+            // 计算总存储大小（MB）
+            const totalSizeBytes = photos.reduce((total, photo) => total + (photo.fileSize || 0), 0);
+            const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(2);
+            totalStorageEl.textContent = `${totalSizeMB} MB`;
+            
+            // 计算存储百分比（假设总容量为1GB）
+            const totalCapacityMB = 1024;
+            const usedPercentage = Math.min(100, (parseFloat(totalSizeMB) / totalCapacityMB) * 100).toFixed(1);
+            storagePercentageEl.textContent = `${usedPercentage}%`;
+            
+            // 更新照片按月统计图表
+            const photosByMonth = getItemsByMonth(photos);
+            photosChart.data.labels = Object.keys(photosByMonth);
+            photosChart.data.datasets[0].data = Object.values(photosByMonth);
+            photosChart.update();
+            
+            // 更新笔记按月统计图表
+            const notesByMonth = getItemsByMonth(notes);
+            notesChart.data.labels = Object.keys(notesByMonth);
+            notesChart.data.datasets[0].data = Object.values(notesByMonth);
+            notesChart.update();
+            
+            // 更新相册分布图表（在renderAlbums中调用）
+        }
+
+        function updateAlbumsChart() {
+            // 计算每个相册的照片数量
+            const albumPhotosCount = {};
+            
+            albums.forEach(album => {
+                albumPhotosCount[album.id] = photos.filter(photo => photo.albumId === album.id).length;
+            });
+            
+            // 更新图表
+            albumsChart.data.labels = albums.map(album => album.name);
+            albumsChart.data.datasets[0].data = albums.map(album => albumPhotosCount[album.id] || 0);
+            albumsChart.update();
+        }
+
+        function calculateNewContentStats() {
+            // 计算过去7天的新内容
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            
+            const newPhotosCount = photos.filter(photo => new Date(photo.date) >= sevenDaysAgo).length;
+            const newNotesCount = notes.filter(note => new Date(note.date) >= sevenDaysAgo).length;
+            
+            statsSummaryEl.innerHTML = `<span class="font-medium text-primary">${newPhotosCount} 张新照片</span> 和 <span class="font-medium text-secondary">${newNotesCount} 篇新笔记</span>`;
+        }
+
+        // 备份与恢复相关函数
+        function openBackupModal() {
+            backupModal.classList.remove('hidden');
+            backupModal.classList.add('flex');
+        }
+
+        function closeBackupModal() {
+            backupModal.classList.remove('flex');
+            backupModal.classList.add('hidden');
+            importDataInput.value = '';
+        }
+
+        function exportData() {
+            const backupData = {
+                photos: photos,
+                notes: notes,
+                albums: albums,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(backupData);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `魏初玖私人网站备份_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            // 显示成功提示
+            alert('数据备份成功，文件已下载');
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                alert('请选择正确的备份文件（.json格式）');
+                return;
+            }
+            
+            if (confirm('确定要导入数据吗？这将覆盖当前所有照片和笔记。')) {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        if (importedData.photos && importedData.notes && importedData.albums) {
+                            photos = importedData.photos;
+                            notes = importedData.notes;
+                            albums = importedData.albums;
+                            
+                            saveData();
+                            renderAlbums();
+                            renderPhotos();
+                            renderNotes();
+                            renderNoteTags();
+                            updateCounters();
+                            updateStats();
+                            
+                            alert('数据导入成功');
+                            closeBackupModal();
+                        } else {
+                            alert('备份文件格式不正确');
+                        }
+                    } catch (error) {
+                        console.error('导入失败', error);
+                        alert('导入失败，文件格式不正确');
+                    }
+                };
+                
+                reader.readAsText(file);
+            }
+        }
+
+        // 数据存储相关函数
+        function saveData() {
+            localStorage.setItem('weichujiu_photos', JSON.stringify(photos));
+            localStorage.setItem('weichujiu_notes', JSON.stringify(notes));
+            localStorage.setItem('weichujiu_albums', JSON.stringify(albums));
+        }
+
+        function loadData() {
+            const savedPhotos = localStorage.getItem('weichujiu_photos');
+            const savedNotes = localStorage.getItem('weichujiu_notes');
+            const savedAlbums = localStorage.getItem('weichujiu_albums');
+            
+            if (savedPhotos) {
+                photos = JSON.parse(savedPhotos);
+            }
+            
+            if (savedNotes) {
+                notes = JSON.parse(savedNotes);
+            }
+            
+            if (savedAlbums) {
+                albums = JSON.parse(savedAlbums);
+                // 确保默认相册存在
+                if (!albums.some(album => album.id === 'default')) {
+                    albums.unshift({ id: 'default', name: '默认相册', description: '默认存储的照片' });
+                }
+            }
+        }
+
+        // 工具函数
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) {
+                return text;
+            }
+            return text.substring(0, maxLength) + '...';
+        }
+
+        function getItemsByMonth(items) {
+            const result = {};
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            
+            // 获取过去6个月
+            for (let i = 5; i >= 0; i--) {
+                const monthDate = new Date(currentYear, now.getMonth() - i, 1);
+                const monthKey = monthDate.toLocaleString('zh-CN', { month: 'short' });
+                result[monthKey] = 0;
+            }
+            
+            // 统计每个月的项目数量
+            items.forEach(item => {
+                const itemDate = new Date(item.date);
+                const itemMonthKey = itemDate.toLocaleString('zh-CN', { month: 'short' });
+                
+                // 只统计过去6个月的数据
+                if (result.hasOwnProperty(itemMonthKey)) {
+                    result[itemMonthKey]++;
+                }
+            });
+            
+            return result;
+        }
+
+        function updateCounters() {
+            photosCountEl.textContent = photos.length;
+            notesCountEl.textContent = notes.length;
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
